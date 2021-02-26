@@ -1,0 +1,35 @@
+﻿@model IEnumerable<MovieSearch.Category>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<h1>Категорії</h1>
+
+<p>
+    <a asp-action="Create">Додати категорію</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
+                @Html.ActionLink("Перелік ", "Index", "Films", new { firstId = item.Id, retController = "Categories" })|
+                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

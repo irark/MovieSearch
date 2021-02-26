@@ -1,0 +1,80 @@
+﻿@model IEnumerable<MovieSearch.Film>
+
+@{
+    ViewData["Title"] = "Фільми";
+}
+
+<h1>Фільми</h1>
+
+<p>
+    <a asp-action="Create" asp-route-firstId="@ViewBag.Id" asp-route-retController="@ViewBag.ReturnController">Додати новий фільм</a> 
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Year)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Info)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FilmGanreRelationships)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FilmActorRelationships)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Info)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.Name)
+            </td>
+            <td>
+                @foreach (var e in item.FilmGanreRelationships)
+                {
+
+                    <div>
+                        @Html.DisplayFor(modelItem => e.Ganre.Name)
+                    </div>
+                }
+            </td>
+            <td>
+                @foreach (var e in item.FilmActorRelationships)
+                {
+
+                    <div>
+                        @Html.DisplayFor(modelItem => e.Actor.Name)
+                    </div>
+                }
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id" asp-route-firstId="@ViewBag.Id" asp-route-retController ="@ViewBag.ReturnController">Редагувати</a> |
+
+                <a asp-action="Delete" asp-route-id="@item.Id" asp-route-firstId="@ViewBag.Id" asp-route-retController ="@ViewBag.ReturnController">Видалити</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,57 @@
+﻿@model MovieSearch.Film
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Додавання фільм</h1>
+
+<h4>Фільм</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Year" class="control-label"></label>
+                <input asp-for="Year" class="form-control" />
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Info" class="control-label"></label>
+                <input asp-for="Info" class="form-control" />
+                <span asp-validation-for="Info" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryId" class="control-label"></label>
+                <select asp-for="CategoryId" class="form-control" asp-items="@ViewBag.CategoryList"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="FilmGanreRelationships" class="control-label"></label>
+                <select multiple asp-for="FilmGanreRelationships" asp-items="@ViewBag.GanreList"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="FilmActorRelationships" class="control-label"></label>
+                <select multiple asp-for="FilmActorRelationships" asp-items="@ViewBag.ActorList"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Додати" class="btn btn-primary" />
+                <input type="hidden" name="firstId" value="@ViewBag.Id" />
+                <input type="hidden" name="retController" value="@ViewBag.ReturnController" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-route-firstId="@ViewBag.Id" asp-route-retController="@ViewBag.ReturnController">Повернутись до списку</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
