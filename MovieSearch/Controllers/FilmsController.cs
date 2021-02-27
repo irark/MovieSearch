@@ -20,22 +20,7 @@ namespace MovieSearch.Controllers
         }
 
         // GET: Films
-        private bool isCorrectGanre( Film f, int? id)
-        {
-            foreach(var item in f.FilmGanreRelationships)
-            {
-                if (item.GanreId == id) return true;
-            }
-            return false;
-        }
-        private bool isCorrectActor(Film f, int? id)
-        {
-            foreach (var item in f.FilmActorRelationships)
-            {
-                if (item.ActorId == id) return true;
-            }
-            return false;
-        }
+        
         private void FillReturnPath(string? returnController)
         {
             ViewBag.ReturnController = returnController;
@@ -134,19 +119,34 @@ namespace MovieSearch.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(film);
+                var ganresId = Request.Form["ganres"];
+                foreach(var g in ganresId)
+                {
+                    int gId = int.Parse(g);
+                    var ganre = _context.Ganres.Where(g => g.Id == gId).FirstOrDefault();
+                    FilmGanreRelationship fgr = new FilmGanreRelationship();
+                    fgr.Film = film;
+                    fgr.GanreId = gId;
+                    fgr.Ganre = ganre;
+                    ganre.FilmGanreRelationships.Add(fgr);
+                    film.FilmGanreRelationships.Add(fgr);
+                    _context.FilmGanreRelationships.Add(fgr);
+                }
+                var actorsId = Request.Form["actors"];
+                foreach (var a in actorsId)
+                {
+                    int aId = int.Parse(a);
+                    var actor = _context.Actors.Where(a => a.Id == aId).FirstOrDefault();
+                    FilmActorRelationship far = new FilmActorRelationship();
+                    far.Film = film;
+                    far.ActorId = aId;
+                    far.Actor = actor;
+                    actor.FilmActorRelationships.Add(far);
+                    film.FilmActorRelationships.Add(far);
+                    _context.FilmActorRelationships.Add(far);
+                }
                 await _context.SaveChangesAsync();
-                foreach (var item in film.FilmGanreRelationships)
-                {
-                    _context.FilmGanreRelationships.Add(item);
-                    await _context.SaveChangesAsync();
-                }
-                
-                foreach (var item in film.FilmActorRelationships)
-                {
-                    _context.FilmActorRelationships.Add(item);
-                    await _context.SaveChangesAsync();
-                }
-                
+               
                 return RedirectToAction("Index", "Films", new { firstId = firstId, retController = retController });
             }
 
@@ -186,7 +186,54 @@ namespace MovieSearch.Controllers
                 try
                 {
                     _context.Update(film);
+                    var ganresId = Request.Form["ganres"];
+                    film.FilmGanreRelationships.Clear();
+                    var GIds = _context.FilmGanreRelationships.Where(r => r.FilmId == id);
+                    foreach(var item in GIds)
+                    {
+                        _context.Remove(item);
+                    }
+                    foreach (var g in ganresId)
+                    {
+                        int gId = int.Parse(g);
+                        var ganre = _context.Ganres.Where(g => g.Id == gId).FirstOrDefault();
+                        FilmGanreRelationship fgr = new FilmGanreRelationship();
+                        fgr.Film = film;
+                        fgr.GanreId = gId;
+                        fgr.Ganre = ganre;
+                        foreach(var e in ganre.FilmGanreRelationships)
+                        {
+                            if (e.FilmId == film.Id) ganre.FilmGanreRelationships.Remove(e);
+                        }
+                        ganre.FilmGanreRelationships.Add(fgr);
+                        film.FilmGanreRelationships.Add(fgr);
+                        _context.FilmGanreRelationships.Add(fgr);
+                    }
+                    var actorsId = Request.Form["actors"];
+                    film.FilmGanreRelationships.Clear();
+                    var AIds = _context.FilmActorRelationships.Where(r => r.FilmId == id);
+                    foreach (var item in AIds)
+                    {
+                        _context.Remove(item);
+                    }
+                    foreach (var a in actorsId)
+                    {
+                        int aId = int.Parse(a);
+                        var actor = _context.Actors.Where(a => a.Id == aId).FirstOrDefault();
+                        FilmActorRelationship far = new FilmActorRelationship();
+                        far.Film = film;
+                        far.ActorId = aId;
+                        far.Actor = actor;
+                        foreach (var e in actor.FilmActorRelationships)
+                        {
+                            if (e.FilmId == film.Id) actor.FilmActorRelationships.Remove(e);
+                        }
+                        actor.FilmActorRelationships.Add(far);
+                        film.FilmActorRelationships.Add(far);
+                        _context.FilmActorRelationships.Add(far);
+                    }
                     await _context.SaveChangesAsync();
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -230,17 +277,17 @@ namespace MovieSearch.Controllers
             FillSelectLists(firstId);
             FillReturnPath(retController);
             var film = await _context.Films.FindAsync(id);
-            
-            foreach (var item in film.FilmActorRelationships)
-            {
-                _context.FilmActorRelationships.Remove(item);
-            }
-            await _context.SaveChangesAsync();
-            foreach (var item in film.FilmGanreRelationships)
+            var ganresIds = _context.FilmGanreRelationships.Where(g => g.FilmId == id);
+            foreach (var item in ganresIds)
             {
                 _context.FilmGanreRelationships.Remove(item);
             }
-            await _context.SaveChangesAsync();
+
+            var actorsIds = _context.FilmActorRelationships.Where(g => g.FilmId == id);
+            foreach (var item in actorsIds)
+            {
+                _context.FilmActorRelationships.Remove(item);
+            }
             _context.Films.Remove(film);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Films", new { firstId = firstId, retController = retController });

@@ -34,13 +34,11 @@
             </div>
             <div class="form-group">
                 <label asp-for="FilmGanreRelationships" class="control-label"></label>
-                <select multiple asp-for="FilmGanreRelationships" asp-items="@ViewBag.GanreList"></select>
-
+                <select multiple name="ganres" asp-for="FilmGanreRelationships" asp-items="@ViewBag.GanreList"></select>
             </div>
             <div class="form-group">
-
                 <label asp-for="FilmActorRelationships" class="control-label"></label>
-                <select multiple asp-for="FilmActorRelationships" asp-items="@ViewBag.ActorList"></select>
+                <select multiple name="actors" asp-for="FilmActorRelationships" asp-items="@ViewBag.ActorList"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Зберегти" class="btn btn-primary" />
