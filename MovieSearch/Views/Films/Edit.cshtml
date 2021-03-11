@@ -41,7 +41,7 @@
                 <select multiple name="actors" asp-for="FilmActorRelationships" asp-items="@ViewBag.ActorList"></select>
             </div>
             <div class="form-group">
-                <input type="submit" value="Зберегти" class="btn btn-primary" />
+                <input type="submit" value="Зберегти" class="btn btn-outline-secondary" />
                 <input type="hidden" name="firstId" value="@ViewBag.Id" />
                 <input type="hidden" name="retController" value="@ViewBag.ReturnController" />
 

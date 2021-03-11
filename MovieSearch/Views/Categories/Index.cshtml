@@ -5,13 +5,15 @@
 }
 
 <h1>Категорії</h1>
-
+@if (User.IsInRole("admin"))
+{
 <p>
     <a asp-action="Create">Додати категорію</a>
 </p>
+}
 <table class="table">
     <thead>
-        <tr>
+        <tr class="table-primary">
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -19,17 +21,47 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
+        @foreach (var item in Model)
+        {
+        <tr class="table-secondary">
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
-                @Html.ActionLink("Перелік ", "Index", "Films", new { firstId = item.Id, retController = "Categories" })|
-                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                @if (User.IsInRole("admin")){
+                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати |</a> <br />
+                <a asp-action="Delete" asp-route-id="@item.Id">Видалити |</a><br />
+                }
+                @Html.ActionLink("Перелік ", "Index", "Films", new { firstId = item.Id, retController = "Categories" })
+                
             </td>
         </tr>
-}
-    </tbody>
+        }
+</tbody>
 </table>
+
+<div class="container">
+    <div id="chart1"></div>
+</div>
+@section scripts{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            $.get('/api/Charts/JsonDataForCategories', function (JsonDataForCategories) {
+                data = google.visualization.arrayToDataTable(JsonDataForCategories, false);
+                var option = {
+                    title: "Співвідношення кількості фільмів та категорій",
+                    width: 500,
+                    height: 400
+                };
+                chart = new google.visualization.PieChart(document.getElementById('chart1'));
+                chart.draw(data, option);
+            })
+        }
+    </script>
+}
+

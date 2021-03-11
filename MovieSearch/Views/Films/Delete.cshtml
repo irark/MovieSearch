@@ -39,7 +39,7 @@
 
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Видалити" class="btn btn-danger" /> |
+        <input type="submit" value="Видалити" class="btn btn-outline-danger" /> |
         <input type="hidden" name="firstId" value="@ViewBag.Id" />
         <input type="hidden" name="retController" value="@ViewBag.ReturnController" />
         <a asp-action="Index" asp-route-firstId="@ViewBag.Id" asp-route-retController="@ViewBag.ReturnController">Повернутись до списку</a>

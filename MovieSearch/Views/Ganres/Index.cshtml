@@ -5,13 +5,15 @@
 }
 
 <h1>Жанри</h1>
-
-<p>
-    <a asp-action="Create">Додати</a>
-</p>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        <a asp-action="Create">Додати</a>
+    </p>
+}
 <table class="table">
     <thead>
-        <tr>
+        <tr class="table-primary">
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -19,17 +21,46 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
-                @Html.ActionLink("Перелік ", "Index", "Films", new { firstId = item.Id, retController = "Ganres" })|
-                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr class="table-secondary">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @if (User.IsInRole("admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Редагувати |</a><br />
+
+                        <a asp-action="Delete" asp-route-id="@item.Id">Видалити |</a><br />
+                    }
+                        @Html.ActionLink("Перелік ", "Index", "Films", new { firstId = item.Id, retController = "Ganres" })
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+<div class="container">
+    <div id="chart1"></div>
+</div>
+@section scripts{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            $.get('/api/Charts/JsonDataForGanres', function (JsonDataForGanres) {
+                data = google.visualization.arrayToDataTable(JsonDataForGanres, false);
+                var option = {
+                    title: "Співвідношення кількості фільмів та жанрів",
+                    width: 500,
+                    height: 400
+                };
+                chart = new google.visualization.BarChart(document.getElementById('chart1'));
+                chart.draw(data, option);
+            })
+        }
+    </script>
+}

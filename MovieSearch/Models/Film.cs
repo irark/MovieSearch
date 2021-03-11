@@ -22,6 +22,7 @@ namespace MovieSearch
         public int CategoryId { get; set; }
         [Required(ErrorMessage = "Поле не повинне бути порожнім")]
         [Display(Name = "Рік")]
+        [Range(1700, 2021, ErrorMessage = "Недопустимий рік")]
         public int Year { get; set; }
         [Required(ErrorMessage = "Поле не повинне бути порожнім")]
         [Display(Name = "Опис")]
@@ -32,7 +33,9 @@ namespace MovieSearch
         public virtual ICollection<FilmActorRelationship> FilmActorRelationships { get; set; }
         [Display(Name = "Жанри")]
         public virtual ICollection<FilmGanreRelationship> FilmGanreRelationships { get; set; }
+  
+        public virtual ICollection<FilmUserRelationship> FilmUserRelationships { get; set; }
 
-       
+
     }
 }

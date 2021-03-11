@@ -1,0 +1,24 @@
+﻿@model MovieSearch.ViewModel.LoginViewModel
+
+<h2>Вхід</h2>
+<form method="post" asp-controller="Account" asp-action="Login"
+      asp-route-returnUrl="@Model.ReturnUrl">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div>
+        <label asp-for="Email"></label><br />
+        <input asp-for="Email"  class="form-control" type="email" aria-describedby="emailHelp" placeholder="Введіть email"/>
+        <span asp-validation-for="Email"></span>
+    </div>
+    <div>
+        <label asp-for="Password"></label><br />
+        <input asp-for="Password" type="password" class="form-control" placeholder="Пароль" />
+        <span asp-validation-for="Password"></span>
+    </div>
+    <div>
+        <label asp-for="RememberMe"></label><br />
+        <input asp-for="RememberMe" />
+    </div>
+    <div>
+        <button type="submit" class="btn btn-outline-secondary">Увійти</button>
+    </div>
+</form>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MovieSearch;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MovieSearch.Controllers
 {

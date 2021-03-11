@@ -5,13 +5,15 @@
 }
 
 <h1>Фільми</h1>
-
+@Html.ActionLink("Завантажити ", "Report", "Films", new { firstId = ViewBag.Id, retController = ViewBag.ReturnController })
+@if (User.IsInRole("admin")){
 <p>
-    <a asp-action="Create" asp-route-firstId="@ViewBag.Id" asp-route-retController="@ViewBag.ReturnController">Додати новий фільм</a> 
+    <a asp-action="Create" asp-route-firstId="@ViewBag.Id" asp-route-retController="@ViewBag.ReturnController">Додати новий фільм</a>
 </p>
+}
 <table class="table">
     <thead>
-        <tr>
+        <tr class="table-primary">
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -34,9 +36,9 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model)
-{
-        <tr>
+        @foreach (var item in Model)
+        {
+        <tr class="table-secondary">
 
 
             <td>
@@ -53,28 +55,37 @@
             </td>
             <td>
                 @foreach (var e in item.FilmGanreRelationships)
-                {
+                    {
 
-                    <div>
-                        @Html.DisplayFor(modelItem => e.Ganre.Name)
-                    </div>
-                }
+                <div>
+                    @Html.DisplayFor(modelItem => e.Ganre.Name)
+                </div>
+                    }
             </td>
             <td>
                 @foreach (var e in item.FilmActorRelationships)
-                {
+                    {
 
-                    <div>
-                        @Html.DisplayFor(modelItem => e.Actor.Name)
-                    </div>
-                }
+                <div>
+                    @Html.DisplayFor(modelItem => e.Actor.Name)
+                </div>
+                    }
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id" asp-route-firstId="@ViewBag.Id" asp-route-retController ="@ViewBag.ReturnController">Редагувати</a> |
+                @if (User.IsInRole("admin"))
+                {
 
-                <a asp-action="Delete" asp-route-id="@item.Id" asp-route-firstId="@ViewBag.Id" asp-route-retController ="@ViewBag.ReturnController">Видалити</a>
-            </td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" asp-route-firstId="@ViewBag.Id" asp-route-retController="@ViewBag.ReturnController">Редагувати |</a><br />
+
+                    <a asp-action="Delete" asp-route-id="@item.Id" asp-route-firstId="@ViewBag.Id" asp-route-retController="@ViewBag.ReturnController">Видалити |</a><br />
+
+                }
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a asp-action="Favourite" asp-route-id="@item.Id" asp-route-firstId="@ViewBag.Id" asp-route-retController="@ViewBag.ReturnController">Додати до обраного</a>
+                }
+                </td>
         </tr>
-}
+        }
     </tbody>
 </table>

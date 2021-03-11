@@ -24,6 +24,9 @@ namespace MovieSearch
         public virtual DbSet<FilmGanreRelationship> FilmGanreRelationships { get; set; }
         public virtual DbSet<Ganre> Ganres { get; set; }
 
+
+        public virtual DbSet<FilmUserRelationship> FilmUserRelationships { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -50,6 +53,18 @@ namespace MovieSearch
                     .IsRequired()
                     .HasMaxLength(50);
             });
+            modelBuilder.Entity<FilmUserRelationship>(entity =>
+            {
+                entity.ToTable("FilmUserRelationship");
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+                entity.HasOne(d => d.Film)
+                    .WithMany(p => p.FilmUserRelationships)
+                    .HasForeignKey(d => d.FilmId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_FilmUserRelationship_Films");
+            });
 
             modelBuilder.Entity<Film>(entity =>
             {
@@ -64,6 +79,7 @@ namespace MovieSearch
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Films_Categories");
+                
             });
 
             modelBuilder.Entity<FilmActorRelationship>(entity =>

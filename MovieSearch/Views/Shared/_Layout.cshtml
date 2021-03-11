@@ -9,9 +9,13 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-toggleable-sm navbar-expand-lg navbar-dark bg-primary border-bottom box-shadow mb-3">
             <div class="container" id="navbarColor01">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Обране</a>
+
+                }
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -19,17 +23,52 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Categories" asp-action="Index">Категорії</a>
+                            <a class="nav-link" asp-area="" asp-controller="Categories" asp-action="Index">Категорії</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Ganres" asp-action="Index">Жанри</a>
+                            <a class="nav-link" asp-area="" asp-controller="Ganres" asp-action="Index">Жанри</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light " asp-area="" asp-controller="Actors" asp-action="Index">Актори</a>
+                            <a class="nav-link" asp-area="" asp-controller="Actors" asp-action="Index">Актори</a>
                         </li>
+                        @if (User.IsInRole("admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Roles" asp-action="Index">Ролі</a>
+                            </li>
+                        }
+
+
                     </ul>
                 </div>
-            </div>
+                @if (User.Identity.IsAuthenticated)
+
+                {
+                    <form class="form-inline my-2 my-lg-0">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link" method="post" asp-controller="Account" asp-action="Logout">Вийти</a>
+
+                            </li>
+                        </ul>
+                    </form>
+                }
+                @if (!User.Identity.IsAuthenticated)
+
+                {
+                    <form class="form-inline my-2 my-lg-0">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Вхід</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Register">Реєстрація</a>
+                            </li>
+                        </ul>
+                    </form>
+                }
+
+                </div>
         </nav>
     </header>
     <div class="container">

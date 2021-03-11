@@ -6,6 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MovieSearch;
+using System.IO;
+using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MovieSearch.Controllers
 {
@@ -21,6 +27,7 @@ namespace MovieSearch.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
+            ViewBag.CategoriesList = new SelectList(_context.Categories, "Id", "Name");
             return View(await _context.Categories.ToListAsync());
         }
 
@@ -136,5 +143,7 @@ namespace MovieSearch.Controllers
         {
             return _context.Categories.Any(e => e.Id == id);
         }
+        
+
     }
 }
