@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using MovieSearch.ViewModel;
 using MovieSearch.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MovieSearch.Controllers
 {
@@ -34,9 +35,18 @@ namespace MovieSearch.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    // установка кукі
-                    await _signInManager.SignInAsync(user, false);
-                    return RedirectToAction("Index", "Home");
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.Action(
+                        "ConfirmEmail",
+                        "Account",
+                        new { userId = user.Id, code = code },
+                        protocol: HttpContext.Request.Scheme);
+                    EmailService emailService = new EmailService();
+                    await emailService.SendEmailAsync(model.Email, "Confirm your account",
+                        $"Підтвердіть реєстрацію перейшовши за посиланням: <a href='{callbackUrl}'>link</a>");
+
+                    return Content("Для завершення реєстрації перевірте свою електронну пошту і перейдіть за посиланням");
+
                 }
                 else
                 {
@@ -47,6 +57,25 @@ namespace MovieSearch.Controllers
                 }
             }
             return View(model);
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return View("Error");
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return View("Error");
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+                return RedirectToAction("Index", "Home");
+            else
+                return View("Error");
         }
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
@@ -60,23 +89,25 @@ namespace MovieSearch.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result =
-                    await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    // проверяем, подтвержден ли email
+                    if (!await _userManager.IsEmailConfirmedAsync(user) && !user.UserName.Equals("admin"))
+                    {
+                        ModelState.AddModelError(string.Empty, "Ви не підтвердили свій email");
+                        return View(model);
+                    }
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    // перевіряємо, чи належить URL додатку
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    {
-                        return Redirect(model.ReturnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
+                    return RedirectToAction("Index", "Categories");
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Неправильний логін чи (та) пароль");
+                    ModelState.AddModelError("", "Неправильний логін і (або) пароль");
                 }
             }
             return View(model);
