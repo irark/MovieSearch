@@ -36,8 +36,7 @@ namespace MovieSearch
             services.AddControllersWithViews();
 
             services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<IdentityContext>()
-                .AddDefaultTokenProviders();
+                .AddEntityFrameworkStores<IdentityContext>();
 
         }
 

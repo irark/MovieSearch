@@ -7,19 +7,11 @@
         <tr class="table-secondary">
             <td>@role.Name</td>
             <td>
-                @if (role.Name.Equals("user") || role.Name.Equals("admin"))
-                {
-                    <div>Базова роль</div>
-                }
-                else
-                {
-                    <form asp-action="Delete" asp-route-id="@role.Id" method="post">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                            Видалити
-                        </button>
-                    </form>
-                }
-                
+                <form asp-action="Delete" asp-route-id="@role.Id" method="post">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                        Видалити
+                    </button>
+                </form>
             </td>
         </tr>
     }

@@ -67,17 +67,6 @@ namespace MovieSearch.Controllers
 
             return NotFound();
         }
-        [HttpPost]
-        public async Task<ActionResult> Delete(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user != null)
-            {
-                await _userManager.DeleteAsync(user);
-            }
-
-            return RedirectToAction("UserList");
-        }
 
     }
 }

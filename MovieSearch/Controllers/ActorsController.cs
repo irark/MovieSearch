@@ -39,21 +39,12 @@ namespace MovieSearch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Actor actor)
         {
-            if (!IsDuplicate(actor))
+            if (ModelState.IsValid)
             {
-                
-                if (ModelState.IsValid)
-                {
-                    _context.Add(actor);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-
-                return View(actor);
+                _context.Add(actor);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            else
-                ModelState.AddModelError("Name", "Такий актор уже існує");
-
             return View(actor);
         }
 
@@ -84,34 +75,27 @@ namespace MovieSearch.Controllers
             {
                 return NotFound();
             }
-            var model = _context.Actors.FirstOrDefault(a => a.Name.Equals(actor.Name) && a.Id != id);
-            if (model == null)
-            {
-               if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        _context.Update(actor);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!ActorExists(actor.Id))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                    return RedirectToAction(nameof(Index));
-                }
-                return View(actor);
-            }
-            else
-                ModelState.AddModelError("Name", "Такий актор уже існує");
 
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(actor);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ActorExists(actor.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
             return View(actor);
         }
 
@@ -154,12 +138,5 @@ namespace MovieSearch.Controllers
         {
             return _context.Actors.Any(e => e.Id == id);
         }
-        private bool IsDuplicate(Actor model)
-        {
-            var actor = _context.Actors.FirstOrDefault(a => a.Name.Equals(model.Name));
-
-            return actor == null ? false : true;
-        }
-        
     }
 }

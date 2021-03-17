@@ -3,26 +3,23 @@
 @{
     ViewData["Title"] = "Report";
 }
-@if (User.IsInRole("admin"))
-{
-    <h1>Import</h1>
-    <div>
-        <h3>Оберіть Excel-файл для заватаження </h3>
-        @using (Html.BeginForm("Import", "Films", FormMethod.Post, new { enctype = "multipart/form-data", id = "frm-excel" }))
-        {
-            <div>
-                Завантажте Excel-файл:
-                <input type="file" name="fileExcel" id="fileExcel" />
+<h1>Import</h1>
+<div>
+    <h3>Оберіть Excel-файл для заватаження </h3>
+    @using (Html.BeginForm("Import", "Films", FormMethod.Post, new { enctype = "multipart/form-data", id = "frm-excel" }))
+    {
+        <div>
+            Завантажте Excel-файл:
+            <input type="file" name="fileExcel" id="fileExcel" />
 
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Завантажити файл" class="btn btn-outline-secondary" />
-                <input type="hidden" name="firstId" value="@ViewBag.Id" />
-                <input type="hidden" name="retController" value="@ViewBag.ReturnController" />
-            </div>
-        }
-    </div>
-}
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Завантажити файл" class="btn btn-outline-secondary" />
+            <input type="hidden" name="firstId" value="@ViewBag.Id" />
+            <input type="hidden" name="retController" value="@ViewBag.ReturnController" />
+        </div>
+    }
+</div>
 <h1>Export</h1>
 <div>
     <h3>Завантаження інформації у файл</h3>

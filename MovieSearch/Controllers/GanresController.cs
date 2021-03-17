@@ -40,19 +40,12 @@ namespace MovieSearch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Ganre ganre)
         {
-            if (!IsDuplicate(ganre))
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    _context.Add(ganre);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                return View(ganre);
+                _context.Add(ganre);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            else
-                ModelState.AddModelError("Name", "Такий жанр уже існує");
-
             return View(ganre);
         }
 
@@ -83,34 +76,27 @@ namespace MovieSearch.Controllers
             {
                 return NotFound();
             }
-            var model = _context.Ganres.FirstOrDefault(g => g.Name.Equals(ganre.Name) && g.Id != id);
-            if (model == null)
-            {
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        _context.Update(ganre);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!GanreExists(ganre.Id))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                    return RedirectToAction(nameof(Index));
-                }
-                return View(ganre);
-            }
-            else
-                ModelState.AddModelError("Name", "Такий жанр уже існує");
 
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(ganre);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!GanreExists(ganre.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
             return View(ganre);
         }
 
@@ -152,12 +138,6 @@ namespace MovieSearch.Controllers
         private bool GanreExists(int id)
         {
             return _context.Ganres.Any(e => e.Id == id);
-        }
-        private bool IsDuplicate(Ganre model)
-        {
-            var ganre = _context.Ganres.FirstOrDefault(g => g.Name.Equals(model.Name));
-
-            return ganre == null ? false : true;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace MovieSearch
         {
             string adminEmail = "admin@gmail.com";
             string password = "Qwerty_1";
-            string name = "admin@gmail.com";
+            string name = "admin";
             if (await roleManager.FindByNameAsync("admin") == null)
             {
                 await roleManager.CreateAsync(new IdentityRole("admin"));
@@ -24,7 +24,7 @@ namespace MovieSearch
             }
             if (await userManager.FindByNameAsync(adminEmail) == null)
             {
-                User admin = new User { Email = adminEmail, UserName = name, EmailConfirmed = true};
+                User admin = new User { Email = adminEmail, UserName = name };
                 IdentityResult result = await userManager.CreateAsync(admin, password);
                 if (result.Succeeded)
                 {

@@ -45,21 +45,12 @@ namespace MovieSearch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Category category)
         {
-            if (!IsDuplicate(category))
+            if (ModelState.IsValid)
             {
-                ModelState.AddModelError("Name", "Така категорія уже існує");
-
-                if (ModelState.IsValid)
-                {
-                    _context.Add(category);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                return View(category);
+                _context.Add(category);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            else 
-                ModelState.AddModelError("Name", "Така категорія уже існує");
-
             return View(category);
         }
 
@@ -90,34 +81,27 @@ namespace MovieSearch.Controllers
             {
                 return NotFound();
             }
-            var model = _context.Categories.FirstOrDefault(c => c.Name.Equals(category.Name) && c.Id != id);
-            if (model == null)
+
+            if (ModelState.IsValid)
             {
-          
-                if (ModelState.IsValid)
+                try
                 {
-                    try
-                    {
-                        _context.Update(category);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!CategoryExists(category.Id))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                    return RedirectToAction(nameof(Index));
+                    _context.Update(category);
+                    await _context.SaveChangesAsync();
                 }
-                return View(category);
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CategoryExists(category.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
             }
-            else 
-                ModelState.AddModelError("Name", "Така категорія уже існує");
             return View(category);
         }
 
@@ -159,13 +143,7 @@ namespace MovieSearch.Controllers
         {
             return _context.Categories.Any(e => e.Id == id);
         }
-        private bool IsDuplicate(Category model)
-        {
-            var cat = _context.Categories.FirstOrDefault(c => c.Name.Equals(model.Name));
-
-            return cat == null ? false : true;
-        }
-
+        
 
     }
 }

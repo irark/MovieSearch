@@ -2,26 +2,13 @@
 
 <h2>Список користувачів</h2>
 <table class="table">
-@foreach (var user in Model)
-{
-       
-    <tr class="table-secondary">
-        <td>@user.Email</td>
-        @if (!user.UserName.Equals(User.Identity.Name))
-        {
+    @foreach (var user in Model)
+    {
+        <tr class="table-secondary">
+            <td>@user.Email</td>
             <td>
                 <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-userid="@user.Id">Права доступу</a>
-                @*<a class="btn btn-sm btn-outline-secondary" asp-action="Delete" asp-route-userId="@user.Id">Видалити</a>*@
-                <form asp-action="Delete" asp-route-userId="@user.Id" method="post">
-                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                        Видалити
-                    </button>
-                </form>
             </td>
-        }
-       
-    </tr>
-
-            
-}
+        </tr>
+    }
 </table>
