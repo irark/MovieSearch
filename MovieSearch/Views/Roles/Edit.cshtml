@@ -8,9 +8,12 @@
     <div class="form-group">
         @foreach (IdentityRole role in Model.AllRoles)
         {
+            @if(role.Name != "user")
+            {
             <input type="checkbox" name="roles" value="@role.Name"
                    @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") />@role.Name <br />
             }
+        }
     </div>
     <button type="submit" class="btn btn-outline-secondary">Зберегти</button>
 </form>
